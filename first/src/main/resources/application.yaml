@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://114.55.93.187:3306/security
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Cym528812?
+    type: com.zaxxer.hikari.HikariDataSource
+  data:
+    redis:
+      host: 127.0.0.1
+      password:
+      database: 0
+      port: 6379
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.cym.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true

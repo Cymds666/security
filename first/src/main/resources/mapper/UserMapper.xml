@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cym.dao.UserMapper">
+    <select id="getUserByUsername" resultType="com.cym.pojo.User">
+        select * from user where username = #{username};
+    </select>
+
+    <select id="getRoleIdByUserId" resultType="UserRole">
+        select * from user_role where user_id = #{id};
+    </select>
+    <select id="getRolesByRoleIds" resultType="Role">
+        select * from role where role_id in
+        <foreach collection="list" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getPermissionsByRoleIds" resultType="RolePermission">
+        select * from role_permission where role_id in
+        <foreach collection="list" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getPermissionsByIds" resultType="com.cym.pojo.Permission">
+        select * from permission where permission_id in
+        <foreach collection="list" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+</mapper>
