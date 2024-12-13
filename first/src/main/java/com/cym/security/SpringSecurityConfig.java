@@ -7,9 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +25,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig{
     @Resource
     private LogoutSuccessHandler logoutSuccessHandler;
@@ -30,17 +33,22 @@ public class SpringSecurityConfig{
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
     @Resource
     private LoginUnAuthenticationEntryPointHandler loginUnAuthenticationEntryPointHandler;
+    @Resource
+    private LoginUnAccessDeniedHandler loginUnAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.
                 csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(AbstractHttpConfigurer::disable)
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login", "/test1").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(
-                        a -> a.authenticationEntryPoint(loginUnAuthenticationEntryPointHandler))
+                        a -> a.authenticationEntryPoint(loginUnAuthenticationEntryPointHandler)
+                                .accessDeniedHandler(loginUnAccessDeniedHandler))
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(a -> a.logoutSuccessHandler(logoutSuccessHandler))
                 .cors(AbstractHttpConfigurer::disable);

@@ -46,7 +46,7 @@ public class MyUserDetailService implements UserDetailsService {
             List<Role> roles = userMapper.getRolesByRoleIds(roleIdList);
             if (roles != null) {
                 for (Role role : roles) {
-                    roleNames.add("Role_" + role.getRoleName());
+                    roleNames.add("ROLE_" + role.getRoleName());
                 }
             }
 
